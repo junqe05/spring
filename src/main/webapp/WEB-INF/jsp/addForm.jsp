@@ -24,7 +24,6 @@
 			dataType:'text',
 			success:function(res){
 				alert(﻿eval(res) ? "추가 성공" : "추가 실패");
-				return "redirect:/user2/list";
 			},
 			error:function(xhr, status, error){
 				alert(status+':'+error);
