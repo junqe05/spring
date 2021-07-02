@@ -1,16 +1,21 @@
 package com.example.demo.controller;
 
 import java.io.*;
+import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.pds.PDSDAO;
+import com.example.demo.Service.UploadSvc;
+import com.example.demo.pds.UploadDAO;
+import com.example.demo.pds.UploadVO;
 
 @Controller
 @RequestMapping
@@ -18,9 +23,10 @@ public class UploadController
 {
 	@Autowired
 	ResourceLoader resourceLoader;
+	
 	@Autowired
-	PDSDAO psd;
-
+	UploadSvc svc;
+	
 	@GetMapping("/upload")
 	public String getForm() {
 		return "upload_form";
@@ -31,29 +37,14 @@ public class UploadController
 	public String upload(@RequestParam("files")MultipartFile[] mfiles,
 			HttpServletRequest request,
 			@RequestParam("author") String author) {
+		
 		ServletContext context = request.getServletContext();
 		// upload 폴어데 대한 정대경로를 구한다. upload/안에 파일을 저장하기 위함
 		String savePath = context.getRealPath("/WEB-INF/upload");
-		int ulnum = psd.upload(author);
 		try {// 파일정보 배열을 순회하면서 파일을 한개씩 upload/ 안으로 옮긴다
-			for(int i=0;i<mfiles.length;i++) {
-				mfiles[i].transferTo(
-				  new File(savePath+"/"+mfiles[i].getOriginalFilename()));
-				//getOriginalFilename() : 파일경로를 제외한 순수한 파일명만 추출한다.
-				String name = mfiles[i].getOriginalFilename();
-				boolean insert = psd.upfile(mfiles[i], ulnum);
-				System.out.println(insert?name+"저장 성공":name+"저장 실패");
-				
-				/* MultipartFile 주요 메소드
-				String cType = mfiles[i].getContentType();
-				String pName = mfiles[i].getName();
-				Resource res = mfiles[i].getResource();
-				long fSize = mfiles[i].getSize(); // 파일의 크기
-				boolean empty = mfiles[i].isEmpty();
-				*/
-			}
+			boolean add = svc.add(mfiles, author, savePath);
 			String msg = String.format("파일(%d)저장성공(작성자:%s)", mfiles.length,author);
-			return msg; //@ResponseBody이기 때문에 문자열을 바로 보냄
+			return add?msg:"파일 저장 실패";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "파일 저장 실패:";
@@ -86,4 +77,12 @@ public class UploadController
                 //http header(메타 데이터)부분 설정. 브라우저에 대한 명령 첨부 데이터 셋팅
                 .body(resource);//resource(파일 데이터) 전송
 	}
+	
+	@GetMapping("/upload/list")
+	public String list(Model model) {
+		List<UploadVO> list = svc.list();
+		model.addAttribute("list", list);
+		return "/upload/list";
+	}
+	
 }

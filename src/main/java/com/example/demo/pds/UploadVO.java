@@ -1,11 +1,15 @@
 package com.example.demo.pds;
 
+import java.sql.Date;
+
 public class UploadVO {
 	private int num;
 	private String writer;
 	private String subject;
-	private String date;
+	private Date date;
 	private String content;
+	private UpfileVO[] files;
+	
 	
 	public UploadVO(String writer, String subject ,String content) {
 		super();
@@ -14,7 +18,7 @@ public class UploadVO {
 		this.content = content;
 	}
 	
-	public UploadVO(int num, String writer, String date, String subject ,String content) {
+	public UploadVO(int num, String writer, Date date, String subject ,String content) {
 		super();
 		this.num = num;
 		this.writer = writer;
@@ -51,11 +55,11 @@ public class UploadVO {
 		this.subject = subject;
 	}
 
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(Date  date) {
 		this.date = date;
 	}
 
@@ -66,6 +70,16 @@ public class UploadVO {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	
+	
+	public UpfileVO[] getFiles() {
+		return files;
+	}
+
+	public void setFiles(UpfileVO[] files) {
+		this.files = files;
+	}
+
 
 	
 	

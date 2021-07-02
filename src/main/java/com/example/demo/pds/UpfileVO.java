@@ -5,6 +5,7 @@ public class UpfileVO {
 	private int num;
 	private String filename;
 	private long filesize;
+	public UpfileVO() {}
 
 	public UpfileVO(int num, String filename, long filesize) {
 		super();

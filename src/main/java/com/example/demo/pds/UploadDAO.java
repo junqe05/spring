@@ -1,6 +1,7 @@
 package com.example.demo.pds;
 
 import java.sql.PreparedStatement;
+import java.util.*;
 
 import javax.swing.text.AbstractDocument.Content;
 
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Repository 
-public class PDSDAO {
+public class UploadDAO {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	String sql;
@@ -42,5 +43,29 @@ public class PDSDAO {
 		int insert = jdbcTemplate.update(sql, uf.getNum(), uf.getFilename(), uf.getFilesize());
 		return insert>0?true:false;
 	}
+	
+   public List<UploadVO> list(){
+	      String sql = "SELECT u.num, subject, writer, date, filename "+
+	               "FROM upload u INNER JOIN upfile f "+
+	               "ON u.num=f.num";
+	      List<UploadVO> list = jdbcTemplate.query(sql, (rs,i)->{
+	         UploadVO uvo = new UploadVO();
+	         uvo.setNum(rs.getInt("NUM"));
+	         uvo.setSubject(rs.getString("SUBJECT"));
+	         uvo.setWriter(rs.getString("WRITER"));
+	         uvo.setDate(rs.getDate("DATE"));
+	         String fname = rs.getString("FILENAME");
+	         if(fname!=null) {
+	            UpfileVO fvo = new UpfileVO();
+	            fvo.setFilename(fname);
+	            UpfileVO[] files = new UpfileVO[1];
+	            files[0] = new UpfileVO();
+	            files[0].setFilename(fname);
+	            uvo.setFiles(files);
+	         }
+	         return uvo;
+	      });
+	      return list;
+	   }
 
 }
