@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,7 +32,7 @@ public class BbsController
 	public String getBbsById(@PathVariable("num")int num, Model model) {
 		BbsVO vo = bbsSvc.getBbsById(num);
 		model.addAttribute("vo", vo);
-		return "bbs/get_bbs";
+		return "bbs/board";
 	}
 	
 	@GetMapping("/list")
@@ -44,9 +45,16 @@ public class BbsController
 	
 	@GetMapping("/list/page/{n}")
 	public String list_page(@PathVariable("n")int pn, Model model) {
-		PageInfo<BbsVO> pageinfo = bbsSvc.getUserListPage(pn, 2);
+		PageInfo<BbsVO> pageinfo = bbsSvc.getListPage(pn, 5);
 		model.addAttribute("pageinfo", pageinfo);
 		//System.out.println(ArrayUtil.toString(pageinfo.getNavigatepageNums()));
 		return "bbs/list_page";
+	}
+	
+	@GetMapping("/write")
+	public String wirte(@ModelAttribute("bbs") BbsVO vo) {
+		boolean write = bbsSvc.write(vo);
+		System.out.print(write);
+		return write?"true":"false";
 	}
 }

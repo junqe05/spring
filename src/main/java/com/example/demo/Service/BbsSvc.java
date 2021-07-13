@@ -22,16 +22,22 @@ public class BbsSvc
 	}
 	
 	public List<BbsVO> list(){
-		List<BbsVO> list = bbsMapper.getBbsList();
+		List<BbsVO> list = bbsMapper.getBbsLvlList();
 		return list;
 	}
 	
-	public PageInfo<BbsVO> getUserListPage(int pageNum, int pageSize) {
+	public PageInfo<BbsVO> getListPage(int pageNum, int pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
-		PageInfo<BbsVO> pageInfo = new PageInfo<>( bbsMapper.getBbsList());
+		List<BbsVO> list = bbsMapper.getBbsList();
+		PageInfo<BbsVO> pageInfo = new PageInfo<>(list);
         //List<BbsVO> list = pageInfo.getList();  // 지정한 페이지에 속하는 정보만 가져옴
         //PageInfo 클래스에서 Pagination을 위한 다양한 속성과 메소드가 포함되어 있음
 		return pageInfo;
+	}
+	
+	public boolean write(BbsVO vo) {
+		int n = bbsMapper.insertSubBbs(vo);
+		return n>0?true:false;
 	}
 
 }

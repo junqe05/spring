@@ -32,9 +32,9 @@ a:hover{background-color: #ddd;}
 		<c:forEach var="b" items="${pageinfo.list}">
 				<tr>
 					<td>${b.num}</td>
-					<td><a href="/bbs/get/${b.num}">
-						${b.title}
-					</a></td>
+					<td>
+						<a href="/bbs/get/${b.num}">${b.title}</a>
+					</td>
 					<td>${b.writer}</td>
 					<td>${b.wdate}</td>
 				</tr>
